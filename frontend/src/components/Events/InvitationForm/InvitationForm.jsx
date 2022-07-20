@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import API from "../../../utils/API.js";
 import TimeGrid from "./TimeGrid/TimeGrid.js";
 
@@ -15,18 +15,18 @@ export default function InvitationForm(props) {
       );
 
       const body = {
-        groupId: intendedGroup.groupInfo._id,
-        members: intendedGroup.groupInfo.members,
-        description: elements.description.value,
         title: elements.title.value,
+        groupId: intendedGroup.groupInfo._id,
+        description: elements.description.value,
+        location: elements.location.value,
         rsvpDeadline: elements["rsvp-deadline"].value,
         timeSlots: {
           dateMap: Object.fromEntries(props.availableTimes),
           startTime: props.startTime,
         },
-        priceLevel: elements.priceLevel.value,
-        distanceLevel: elements.distanceLevel.value,
-        weightedLikes: elements["extra-categories"].value.split(","),
+        members: intendedGroup.groupInfo.members,
+        priceLevel: parseInt(elements.priceLevel.value),
+        distanceLevel: parseInt(elements.distanceLevel.value),
       };
 
       await API.patch("api/v1/auth/event/create", body, config);
@@ -48,9 +48,9 @@ export default function InvitationForm(props) {
                 id="group-member-ids"
                 required
               >
-                {props.groups.map((group) => (
+                {props.groups.map((group, index) => (
                   <option
-                    key={group.groupInfo._id}
+                    key={index}
                     value={group.groupInfo._id}
                   >
                     {group.groupInfo.name}
@@ -58,14 +58,7 @@ export default function InvitationForm(props) {
                 ))}
               </select>
             </fieldset>
-            <fieldset>
-              <legend>Pick an RSVP deadline</legend>
-              <input
-                id="rsvp-deadline"
-                type="datetime-local"
-                required
-              />
-            </fieldset>
+
             <fieldset className="time-slot-field">
               <legend>Pick time slots</legend>
               <TimeGrid
@@ -79,22 +72,28 @@ export default function InvitationForm(props) {
 
           <div className="filters">
             <fieldset>
-              <legend>Extra categories</legend>
+              <legend>Pick an RSVP deadline</legend>
               <input
-                id="extra-categories"
-                type="text"
+                id="rsvp-deadline"
+                type="datetime-local"
                 required
               />
             </fieldset>
 
             <fieldset>
               <legend>Title</legend>
-              <textarea id="title" />
+              <textarea
+                id="title"
+                required
+              />
             </fieldset>
 
             <fieldset>
               <legend>Description</legend>
-              <textarea id="description" />
+              <textarea
+                id="description"
+                required
+              />
             </fieldset>
 
             <fieldset>
@@ -117,6 +116,29 @@ export default function InvitationForm(props) {
             </fieldset>
 
             <fieldset>
+              <legend>Location</legend>
+              <p>Starting location</p>
+              <textarea
+                id="location"
+                required
+              />
+              <p>Distance level</p>
+              {["level-1", "level-2", "level-3", "level-4"].map((label, index) => (
+                <div>
+                  <input
+                    key={index}
+                    id={label}
+                    name="distanceLevel"
+                    type="radio"
+                    value={index + 1}
+                    required
+                  />
+                  <label htmlFor={label}>{index + 1}</label>
+                </div>
+              ))}
+            </fieldset>
+
+            <fieldset>
               <legend>Price Level</legend>
               {["<$10", "$11-30", "$31-60", "$61+"].map((label, index) => (
                 <div>
@@ -125,25 +147,10 @@ export default function InvitationForm(props) {
                     id={label}
                     name="priceLevel"
                     type="radio"
-                    value={index}
+                    value={index + 1}
+                    required
                   />
                   <label htmlFor={label}>{label}</label>
-                </div>
-              ))}
-            </fieldset>
-
-            <fieldset>
-              <legend>Distance</legend>
-              {["level-1", "level-2", "level-3", "level-4"].map((label, index) => (
-                <div>
-                  <input
-                    key={index}
-                    id={label}
-                    name="distanceLevel"
-                    type="radio"
-                    value={index}
-                  />
-                  <label htmlFor={label}>{index + 1}</label>
                 </div>
               ))}
             </fieldset>

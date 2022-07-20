@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import TimeGrid from "./TimeGrid/TimeGrid";
 import Popup from "reactjs-popup";
 import API from "../../../utils/API";
@@ -19,10 +19,9 @@ export default function InvitationResponseForm(props) {
         eventId: props.eventId,
         groupId: intendedGroup.groupInfo._id,
         attending: rsvpStatus === "accept" ? true : false,
-        priceLevel: elements.priceLevel.value,
-        distanceLevel: elements.distanceLevel.value,
-        weightedLikes: elements["extra-categories"].value.split(","),
-        availability: props.availableTimes,
+        priceLevel: parseInt(elements.priceLevel.value),
+        distanceLevel: parseInt(elements.distanceLevel.value),
+        availability: Object.fromEntries(props.availableTimes),
       };
 
       await API.patch("api/v1/auth/inviteResponse/update", body, config);
@@ -68,15 +67,6 @@ export default function InvitationResponseForm(props) {
 
                 <div className="filters">
                   <fieldset>
-                    <legend>Extra categories</legend>
-                    <input
-                      id="extra-categories"
-                      type="text"
-                      required
-                    />
-                  </fieldset>
-
-                  <fieldset>
                     <legend>Transportation</legend>
                     <select
                       id="transportation"
@@ -104,7 +94,8 @@ export default function InvitationResponseForm(props) {
                           id={label}
                           name="priceLevel"
                           type="radio"
-                          value={index}
+                          value={index + 1}
+                          required
                         />
                         <label htmlFor={label}>{label}</label>
                       </div>
@@ -120,7 +111,8 @@ export default function InvitationResponseForm(props) {
                           id={label}
                           name="distanceLevel"
                           type="radio"
-                          value={index}
+                          value={index + 1}
+                          required
                         />
                         <label htmlFor={label}>{index + 1}</label>
                       </div>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import InvitationCard from "../InvitationForm/InvitationCard";
 
+// import "react-wheel-of-prizes/dist/index.css";
+
 export default function HostedEvents(props) {
   return (
     <div>

@@ -6,7 +6,6 @@ const InviteResponseSchema = new mongoose.Schema({
   attending: Boolean,
   priceLevel: Number,
   distanceLevel: Number,
-  weightedLikes: [String],
   availability: Object,
 });
 
